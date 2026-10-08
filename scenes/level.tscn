@@ -1,13 +1,10 @@
-[gd_scene load_steps=14 format=3 uid="uid://dlevel0main001"]
+[gd_scene format=3 uid="uid://bb15idxx4sm1u"]
 
-[ext_resource type="PackedScene" uid="uid://cplayer0rooto1" path="res://scenes/player.tscn" id="1_player"]
+[ext_resource type="PackedScene" uid="uid://cfpo0lphtggry" path="res://scenes/player.tscn" id="1_player"]
 
 [sub_resource type="ProceduralSkyMaterial" id="Sky_proc"]
-sky_top_color = Color(0.385, 0.454, 0.55, 1)
 sky_horizon_color = Color(0.646, 0.656, 0.67, 1)
-ground_bottom_color = Color(0.2, 0.169, 0.133, 1)
 ground_horizon_color = Color(0.646, 0.656, 0.67, 1)
-sun_angle_max = 30.0
 
 [sub_resource type="Sky" id="Sky_res"]
 sky_material = SubResource("Sky_proc")
@@ -51,84 +48,83 @@ roughness = 0.7
 [sub_resource type="BoxShape3D" id="BoxShape_crate"]
 size = Vector3(1.5, 1.5, 1.5)
 
-[node name="Level" type="Node3D"]
+[node name="Level" type="Node3D" unique_id=661021113]
 
-[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+[node name="WorldEnvironment" type="WorldEnvironment" parent="." unique_id=1402478203]
 environment = SubResource("Env_res")
 
-[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1975581578]
 transform = Transform3D(0.707107, -0.5, 0.5, 0, 0.707107, 0.707107, -0.707107, -0.5, 0.5, 0, 12, 0)
 shadow_enabled = true
 shadow_bias = 0.03
-directional_shadow_mode = 2
 
-[node name="Floor" type="StaticBody3D" parent="."]
+[node name="Floor" type="StaticBody3D" parent="." unique_id=1682620786]
 
-[node name="FloorMesh" type="MeshInstance3D" parent="Floor"]
+[node name="FloorMesh" type="MeshInstance3D" parent="Floor" unique_id=1637205735]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 mesh = SubResource("BoxMesh_floor")
 surface_material_override/0 = SubResource("Mat_floor")
 
-[node name="FloorCollision" type="CollisionShape3D" parent="Floor"]
+[node name="FloorCollision" type="CollisionShape3D" parent="Floor" unique_id=69685800]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape_floor")
 
-[node name="WallA" type="StaticBody3D" parent="."]
+[node name="WallA" type="StaticBody3D" parent="." unique_id=1082867320]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -5, 1.5, -6)
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallA"]
+[node name="WallMesh" type="MeshInstance3D" parent="WallA" unique_id=511324668]
 mesh = SubResource("BoxMesh_wall")
 surface_material_override/0 = SubResource("Mat_wall")
 
-[node name="WallCollision" type="CollisionShape3D" parent="WallA"]
+[node name="WallCollision" type="CollisionShape3D" parent="WallA" unique_id=816926078]
 shape = SubResource("BoxShape_wall")
 
-[node name="WallB" type="StaticBody3D" parent="."]
+[node name="WallB" type="StaticBody3D" parent="." unique_id=893897275]
 transform = Transform3D(0, 0, 1, 0, 1, 0, -1, 0, 0, 6, 1.5, -2)
 
-[node name="WallMesh" type="MeshInstance3D" parent="WallB"]
+[node name="WallMesh" type="MeshInstance3D" parent="WallB" unique_id=89634021]
 mesh = SubResource("BoxMesh_wall")
 surface_material_override/0 = SubResource("Mat_wall")
 
-[node name="WallCollision" type="CollisionShape3D" parent="WallB"]
+[node name="WallCollision" type="CollisionShape3D" parent="WallB" unique_id=1380618394]
 shape = SubResource("BoxShape_wall")
 
-[node name="CrateA" type="StaticBody3D" parent="."]
+[node name="CrateA" type="StaticBody3D" parent="." unique_id=2124584268]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3, 0.75, 3)
 
-[node name="CrateMesh" type="MeshInstance3D" parent="CrateA"]
+[node name="CrateMesh" type="MeshInstance3D" parent="CrateA" unique_id=1260082336]
 mesh = SubResource("BoxMesh_crate")
 surface_material_override/0 = SubResource("Mat_crate")
 
-[node name="CrateCollision" type="CollisionShape3D" parent="CrateA"]
+[node name="CrateCollision" type="CollisionShape3D" parent="CrateA" unique_id=114701095]
 shape = SubResource("BoxShape_crate")
 
-[node name="CrateB" type="StaticBody3D" parent="."]
+[node name="CrateB" type="StaticBody3D" parent="." unique_id=3596370]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3, 0.75, 4)
 
-[node name="CrateMesh" type="MeshInstance3D" parent="CrateB"]
+[node name="CrateMesh" type="MeshInstance3D" parent="CrateB" unique_id=2133689368]
 mesh = SubResource("BoxMesh_crate")
 surface_material_override/0 = SubResource("Mat_crate")
 
-[node name="CrateCollision" type="CollisionShape3D" parent="CrateB"]
+[node name="CrateCollision" type="CollisionShape3D" parent="CrateB" unique_id=693221386]
 shape = SubResource("BoxShape_crate")
 
-[node name="CrateC" type="StaticBody3D" parent="."]
+[node name="CrateC" type="StaticBody3D" parent="." unique_id=153597829]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 2.25, 6)
 
-[node name="CrateMesh" type="MeshInstance3D" parent="CrateC"]
+[node name="CrateMesh" type="MeshInstance3D" parent="CrateC" unique_id=1490472941]
 mesh = SubResource("BoxMesh_crate")
 surface_material_override/0 = SubResource("Mat_crate")
 
-[node name="CrateCollision" type="CollisionShape3D" parent="CrateC"]
+[node name="CrateCollision" type="CollisionShape3D" parent="CrateC" unique_id=1785038837]
 shape = SubResource("BoxShape_crate")
 
-[node name="Player" parent="." instance=ExtResource("1_player")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+[node name="Player" parent="." unique_id=684100897 instance=ExtResource("1_player")]
+transform = Transform3D(0.8589785, 0.06067402, 0.5084039, -0.052213877, 0.9981576, -0.030903846, -0.5093423, 0, 0.860564, -1.6833658, 2.499981, 2.4719486)
 
-[node name="HUD" type="CanvasLayer" parent="."]
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1968692499]
 
-[node name="Help" type="Label" parent="HUD"]
+[node name="Help" type="Label" parent="HUD" unique_id=366688180]
 anchors_preset = 2
 anchor_top = 1.0
 anchor_bottom = 1.0

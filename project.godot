@@ -60,5 +60,4 @@ toggle_mouse={
 
 [rendering]
 
-renderer/rendering_method="forward_plus"
 lights_and_shadows/directional_shadow/soft_shadow_filter_quality=3
