@@ -1,12 +1,10 @@
-# Tarea 1 — Documento de entrega
+# Tarea 1 — Escena base y modelo generado con IA
 
-> Base del PDF de 4–6 páginas. Rellena los campos marcados con «⟶ COMPLETAR»,
-> inserta las capturas y exporta a PDF (VS Code: extensión *Markdown PDF*, o
-> pégalo en tu editor de documentos).
-
-**Autor:** ⟶ COMPLETAR (nombre y matrícula)
-**Fecha:** ⟶ COMPLETAR
+**Autor:** Andres Alexis Malfavaun Tapia — Matrícula 2203024384
+**Fecha:** 7 de octubre de 2026
 **Motor:** Godot 4.7.2 stable (Forward+)
+**Repositorio:** https://github.com/Katashikunomo/godot_p1
+**Video demo:** https://drive.google.com/file/d/1meTlnRkMq38OsSg5uFtjKwJPQqG3RFEN/view?usp=drive_link
 
 ---
 
@@ -103,22 +101,36 @@ física es estable ante distintos límites de render.
 
 ## 5. Capturas de pruebas (3)
 
-1. ⟶ COMPLETAR: salto junto a un obstáculo sin atravesarlo (CA1).
-2. ⟶ COMPLETAR: cámara girada junto a una pared sin atravesarla (CA2).
-3. ⟶ COMPLETAR: indicador de estado mostrando WALK y la consola con la
-   transición (CA3).
+![Captura 1 — personaje en escena, estado IDLE junto a obstáculos](capturas/captura1.png)
+
+*Captura 1 — El personaje (modelo IA de Tripo, texturizado) sobre el suelo,
+estado `IDLE` en el HUD, obstáculos (muro y cajas) con sus sombras. Base para
+verificar colisiones (CA1).*
+
+![Captura 2 — cámara junto a pared](capturas/captura2.png)
+
+*Captura 2 — Cámara girada junto a una pared sin atravesarla; el `SpringArm3D`
+mantiene al personaje visible (CA2).*
+
+![Captura 3 — estado WALK](capturas/captura3.png)
+
+*Captura 3 — Indicador de estado mostrando `WALK` durante el desplazamiento, con
+la transición impresa en consola (CA3).*
 
 ## 6. Enlaces
 
 - Proyecto completo (repositorio): https://github.com/Katashikunomo/godot_p1
-- Video (1–2 min): ⟶ COMPLETAR
+- Video demo (1–2 min): https://drive.google.com/file/d/1meTlnRkMq38OsSg5uFtjKwJPQqG3RFEN/view?usp=drive_link
 
 ## 7. Modelo generado con IA
 
 Resumen (detalle en `docs/ficha_modelo.md`):
-- Herramienta: ⟶ COMPLETAR (Tripo / Meshy)
-- Triángulos: ⟶ COMPLETAR · Materiales: ⟶ COMPLETAR · Texturas: ⟶ COMPLETAR
-- Escala: ~1.8 m · Procedencia: ⟶ COMPLETAR
+- Herramienta: **Tripo** (confirmado por nombres internos `tripo_node_*`).
+- Triángulos: ~80.065 · Materiales: 1 PBR · Texturas: albedo (.jpg) +
+  metallic/roughness (.png).
+- Altura original ~0.98 m, escalada a ~1.8 m (factor 1.84).
+- Se generó también una variante humano low-poly (~9.208 tris) conservada para
+  la comparación antes/después (ver `prompts/comparacion_antes_despues.md`).
 - Prompt exacto y bitácora: carpeta `prompts/`.
 
 ## 8. Pruebas de aceptación — resultados

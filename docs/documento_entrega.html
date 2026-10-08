@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es"><head><meta charset="utf-8"/>
+<title>Tarea 1 — Documento de entrega</title>
+<style>
+  @page { size: A4; margin: 18mm 16mm; }
+  body { font-family: "Segoe UI", Arial, sans-serif; color: #1a1a1a; line-height: 1.5; font-size: 11pt; }
+  h1 { font-size: 20pt; border-bottom: 3px solid #478cbf; padding-bottom: 6px; }
+  h2 { font-size: 14pt; color: #2b5e86; margin-top: 22px; border-bottom: 1px solid #ddd; padding-bottom: 3px; }
+  h3 { font-size: 12pt; color: #333; }
+  code { background: #f2f4f7; padding: 1px 4px; border-radius: 3px; font-family: Consolas, monospace; font-size: 9.5pt; }
+  pre { background: #1e2430; color: #e6e6e6; padding: 12px; border-radius: 6px; overflow-x: auto; font-size: 9pt; }
+  pre code { background: transparent; color: inherit; padding: 0; }
+  table { border-collapse: collapse; width: 100%; margin: 10px 0; font-size: 10pt; }
+  th, td { border: 1px solid #ccc; padding: 6px 8px; text-align: left; vertical-align: top; }
+  th { background: #eaf1f7; }
+  blockquote { border-left: 4px solid #478cbf; margin: 8px 0; padding: 4px 12px; color: #555; background: #f7fafc; }
+  img { max-width: 100%; border: 1px solid #ccc; border-radius: 4px; margin: 8px 0; display: block; }
+  .missing { color: #b00; font-style: italic; border: 1px dashed #b00; padding: 8px; border-radius: 4px; }
+  a { color: #2b5e86; }
+  hr { border: none; border-top: 1px solid #ddd; margin: 16px 0; }
+</style></head><body>
+<h1>Tarea 1 — Escena base y modelo generado con IA</h1>
+<p><strong>Autor:</strong> Andres Alexis Malfavaun Tapia — Matrícula 2203024384</p><p><strong>Fecha:</strong> 7 de octubre de 2026</p><p><strong>Motor:</strong> Godot 4.7.2 stable (Forward+)</p><p><strong>Repositorio:</strong> https://github.com/Katashikunomo/godot_p1</p><p><strong>Video demo:</strong> https://drive.google.com/file/d/1meTlnRkMq38OsSg5uFtjKwJPQqG3RFEN/view?usp=drive_link</p>
+<hr/>
+<h2>1. Estructura de escenas</h2>
+<p>El proyecto separa tres responsabilidades en tres escenas:</p>
+<ul><li><code>level.tscn</code> — entorno (cielo procedural, luz direccional con sombras, suelo</li></ul><p>  y obstáculos con colisiones). Instancia al personaje.</p><ul><li><code>player.tscn</code> — <code>CharacterBody3D</code> con colisión cápsula, rig de cámara</li></ul><p>  (<code>CameraPivot → SpringArm3D → Camera3D</code>), <code>ModelRoot</code> y UI de estado.</p><ul><li><code>character_model.tscn</code> — escena <strong>envolvente</strong> del modelo generado con IA,</li></ul><p>  independiente del controlador.</p>
+<pre><code>Level
+├─ WorldEnvironment / DirectionalLight3D
+├─ Floor, WallA, WallB, CrateA, CrateB, CrateC  (StaticBody3D + CollisionShape3D)
+└─ Player (CharacterBody3D)
+   ├─ Collision (CapsuleShape3D)
+   ├─ ModelRoot → CharacterModel  (instancia envolvente)
+   ├─ CameraPivot → SpringArm3D → Camera3D
+   └─ DebugUI → StateLabel</code></pre>
+<h2>2. Controles</h2>
+<table><tr><th>Acción</th><th>Entrada</th></tr><tr><td>Mover</td><td><code>W A S D</code> / flechas</td></tr><tr><td>Saltar</td><td><code>Espacio</code> (solo en suelo)</td></tr><tr><td>Girar cámara</td><td>Ratón</td></tr><tr><td>Liberar ratón</td><td><code>Esc</code></td></tr></table>
+<p>Movimiento <strong>relativo a la cámara</strong>: la dirección de entrada se rota según el</p><p>yaw del <code>CameraPivot</code>.</p>
+<h2>3. Diagrama de la FSM</h2>
+<pre><code>            (hay input, en suelo)
+   ┌──────┐ ───────────────────▶ ┌──────┐
+   │ IDLE │                      │ WALK │
+   └──────┘ ◀─────────────────── └──────┘
+      │  ▲   (sin input, en suelo)   │
+      │  │                           │
+ (salta / sale del suelo)      (salta / sale del suelo)
+      │  │                           │
+      ▼  │ (aterriza)                ▼
+     ┌──────────────────────────────────┐
+     │               JUMP               │
+     │        (is_on_floor() == false)  │
+     └──────────────────────────────────┘</code></pre>
+<ul><li><code>IDLE</code>: en suelo, sin dirección.</li><li><code>WALK</code>: en suelo, con dirección.</li><li><code>JUMP</code>: en el aire (subiendo o cayendo). Al aterrizar vuelve a IDLE o WALK</li></ul><p>  según haya input.</p>
+<p>El estado activo se muestra en pantalla (<code>StateLabel</code>) y cada transición se</p><p>imprime en consola: <code>[FSM] IDLE -&gt; JUMP</code>.</p>
+<h2>4. Explicación del movimiento y del tiempo (delta)</h2>
+<ul><li><strong>Gravedad</strong> (aceleración, m/s²): <code>velocity.y -= gravity * delta</code>. Correcto</li></ul><p>  multiplicar por <code>delta</code> porque es una aceleración integrada en el tiempo.</p><ul><li><strong>Velocidad horizontal:</strong> objetivo <code>direction * SPEED</code> (m/s). Se suaviza con</li></ul><p>  <code>lerpf(..., ACCEL * delta)</code>. La magnitud base (SPEED) <strong>no</strong> se multiplica por</p><p>  delta.</p><ul><li><strong>Posición:</strong> la integra <code>move_and_slide()</code> con el delta de física interno.</li></ul><p>  Por eso <strong>no</strong> volvemos a multiplicar la velocidad por delta: evitamos aplicar</p><p>  el tiempo dos veces a la misma magnitud.</p><ul><li><strong>Separación física/visual:</strong> física en <code>_physics_process</code> (paso fijo);</li></ul><p>  presentación en <code>_process</code>.</p>
+<h3>Comparación con dos límites de render (CA3)</h3><p>Al fijar distintos <em>Max FPS</em> (Project Settings → Application/Run → Max FPS, o</p><p><code>Engine.max_fps</code>), el desplazamiento en un intervalo fijo es **prácticamente</p><p>igual**, porque la física corre a paso fijo (60 ticks/s) y la velocidad no</p><p>depende de los FPS de render.</p>
+<p>Verificación determinista realizada (velocidad 5 m/s, 1 segundo simulado):</p>
+<table><tr><th>Render FPS</th><th>Physics FPS</th><th>Desplazamiento en 1 s</th></tr><tr><td>30</td><td>60</td><td>5.0000 m</td></tr><tr><td>144</td><td>60</td><td>5.0000 m</td></tr></table>
+<p><strong>Conclusión:</strong> el desplazamiento no depende del límite de render. Lo que cambia</p><p>con más FPS es la <em>suavidad</em> visual (más fotogramas interpolados), no la</p><p>distancia recorrida. Esto confirma que no se aplica el tiempo dos veces y que la</p><p>física es estable ante distintos límites de render.</p>
+<h2>5. Capturas de pruebas (3)</h2>
+<p><div class="missing">[Falta la imagen: capturas/captura1.png]</div></p>
+<p>*Captura 1 — El personaje (modelo IA de Tripo, texturizado) sobre el suelo,</p><p>estado <code>IDLE</code> en el HUD, obstáculos (muro y cajas) con sus sombras. Base para</p><p>verificar colisiones (CA1).*</p>
+<p><div class="missing">[Falta la imagen: capturas/captura2.png]</div></p>
+<p>*Captura 2 — Cámara girada junto a una pared sin atravesarla; el <code>SpringArm3D</code></p><p>mantiene al personaje visible (CA2).*</p>
+<p><div class="missing">[Falta la imagen: capturas/captura3.png]</div></p>
+<p>*Captura 3 — Indicador de estado mostrando <code>WALK</code> durante el desplazamiento, con</p><p>la transición impresa en consola (CA3).*</p>
+<h2>6. Enlaces</h2>
+<ul><li>Proyecto completo (repositorio): https://github.com/Katashikunomo/godot_p1</li><li>Video demo (1–2 min): https://drive.google.com/file/d/1meTlnRkMq38OsSg5uFtjKwJPQqG3RFEN/view?usp=drive_link</li></ul>
+<h2>7. Modelo generado con IA</h2>
+<p>Resumen (detalle en <code>docs/ficha_modelo.md</code>):</p><ul><li>Herramienta: <strong>Tripo</strong> (confirmado por nombres internos <code>tripo_node_*</code>).</li><li>Triángulos: ~80.065 · Materiales: 1 PBR · Texturas: albedo (.jpg) +</li></ul><p>  metallic/roughness (.png).</p><ul><li>Altura original ~0.98 m, escalada a ~1.8 m (factor 1.84).</li><li>Se generó también una variante humano low-poly (~9.208 tris) conservada para</li></ul><p>  la comparación antes/después (ver <code>prompts/comparacion_antes_despues.md</code>).</p><ul><li>Prompt exacto y bitácora: carpeta <code>prompts/</code>.</li></ul>
+<h2>8. Pruebas de aceptación — resultados</h2>
+<table><tr><th>CA</th><th>Descripción</th><th>Resultado</th></tr><tr><td>CA1</td><td>Moverse/saltar sin atravesar ni saltar en el aire</td><td>✅ Colisiones por <code>CollisionShape3D</code> en suelo/muros/cajas; salto condicionado a <code>is_on_floor()</code> (no hay doble salto). Verificar visualmente con la captura 1.</td></tr><tr><td>CA2</td><td>Girar cámara, referencia de movimiento, no atraviesa paredes</td><td>✅ <code>SpringArm3D</code> acorta la distancia ante paredes; movimiento relativo al yaw de la cámara. Verificar con la captura 2.</td></tr><tr><td>CA3</td><td>Idle/Walk/Jump + comparación de FPS</td><td>✅ FSM reporta <code>IDLE/WALK/JUMP</code>; desplazamiento idéntico (5.0000 m) a 30 y 144 FPS (ver tabla arriba).</td></tr><tr><td>CA4</td><td>Copia del proyecto: modelo/materiales/escala/sin faltantes</td><td>✅ Importación en headless sin errores de recursos; modelo <code>.glb</code> + texturas + <code>.import</code> versionados. Verificar abriendo una copia.</td></tr></table>
+
+</body></html>
