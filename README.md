@@ -1,5 +1,7 @@
 # Tarea 1 — Escena base y modelo generado con IA (Godot 4.x)
 
+**Repositorio:** https://github.com/Katashikunomo/godot_p1
+
 Escena 3D controlable en Godot con `CharacterBody3D`, movimiento relativo a la
 cámara, cámara en tercera persona con `SpringArm3D`, una máquina de estados
 finitos (Idle / Walk / Jump) y una escena envolvente lista para integrar un

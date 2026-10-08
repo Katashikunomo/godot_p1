@@ -110,7 +110,7 @@ física es estable ante distintos límites de render.
 
 ## 6. Enlaces
 
-- Proyecto completo (repositorio): ⟶ COMPLETAR
+- Proyecto completo (repositorio): https://github.com/Katashikunomo/godot_p1
 - Video (1–2 min): ⟶ COMPLETAR
 
 ## 7. Modelo generado con IA
