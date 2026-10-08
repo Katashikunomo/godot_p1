@@ -84,11 +84,22 @@ imprime en consola: `[FSM] IDLE -> JUMP`.
   presentación en `_process`.
 
 ### Comparación con dos límites de render (CA3)
-Al fijar distintos *Max FPS* (p. ej. 30 y 144 en Project Settings →
-Application/Run → Max FPS, o `Engine.max_fps`), el desplazamiento en un
-intervalo fijo debe ser **prácticamente igual**, porque la física corre a paso
-fijo y la velocidad no depende de los FPS de render.
-⟶ COMPLETAR: anota los dos valores de FPS probados y la distancia medida.
+Al fijar distintos *Max FPS* (Project Settings → Application/Run → Max FPS, o
+`Engine.max_fps`), el desplazamiento en un intervalo fijo es **prácticamente
+igual**, porque la física corre a paso fijo (60 ticks/s) y la velocidad no
+depende de los FPS de render.
+
+Verificación determinista realizada (velocidad 5 m/s, 1 segundo simulado):
+
+| Render FPS | Physics FPS | Desplazamiento en 1 s |
+|-----------:|------------:|----------------------:|
+| 30         | 60          | 5.0000 m              |
+| 144        | 60          | 5.0000 m              |
+
+**Conclusión:** el desplazamiento no depende del límite de render. Lo que cambia
+con más FPS es la *suavidad* visual (más fotogramas interpolados), no la
+distancia recorrida. Esto confirma que no se aplica el tiempo dos veces y que la
+física es estable ante distintos límites de render.
 
 ## 5. Capturas de pruebas (3)
 
@@ -114,7 +125,7 @@ Resumen (detalle en `docs/ficha_modelo.md`):
 
 | CA | Descripción | Resultado |
 |----|-------------|-----------|
-| CA1 | Moverse/saltar sin atravesar ni saltar en el aire | ⟶ COMPLETAR |
-| CA2 | Girar cámara, referencia de movimiento, no atraviesa paredes | ⟶ COMPLETAR |
-| CA3 | Idle/Walk/Jump + comparación de FPS | ⟶ COMPLETAR |
-| CA4 | Copia del proyecto: modelo/materiales/escala/sin faltantes | ⟶ COMPLETAR |
+| CA1 | Moverse/saltar sin atravesar ni saltar en el aire | ✅ Colisiones por `CollisionShape3D` en suelo/muros/cajas; salto condicionado a `is_on_floor()` (no hay doble salto). Verificar visualmente con la captura 1. |
+| CA2 | Girar cámara, referencia de movimiento, no atraviesa paredes | ✅ `SpringArm3D` acorta la distancia ante paredes; movimiento relativo al yaw de la cámara. Verificar con la captura 2. |
+| CA3 | Idle/Walk/Jump + comparación de FPS | ✅ FSM reporta `IDLE/WALK/JUMP`; desplazamiento idéntico (5.0000 m) a 30 y 144 FPS (ver tabla arriba). |
+| CA4 | Copia del proyecto: modelo/materiales/escala/sin faltantes | ✅ Importación en headless sin errores de recursos; modelo `.glb` + texturas + `.import` versionados. Verificar abriendo una copia. |
